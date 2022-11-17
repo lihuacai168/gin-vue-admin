@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -31,11 +32,20 @@ func RegisterRule(key string, rule Rules) (err error) {
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: NotEmpty
 //@description: 非空 不能为其对应类型的0值
-//@param: key string, rule Rules
-//@return: err error
+//@return: string
 
 func NotEmpty() string {
 	return "notEmpty"
+}
+
+// @author: [zooqkl](https://github.com/zooqkl)
+// @function: RegexpMatch
+// @description: 正则校验 校验输入项是否满足正则表达式
+// @param:  rule string
+// @return: string
+
+func RegexpMatch(rule string) string {
+	return "regexp=" + rule
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -127,12 +137,21 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 	for i := 0; i < num; i++ {
 		tagVal := typ.Field(i)
 		val := val.Field(i)
+		if tagVal.Type.Kind() == reflect.Struct {
+			if err = Verify(val.Interface(), roleMap); err != nil {
+				return err
+			}
+		}
 		if len(roleMap[tagVal.Name]) > 0 {
 			for _, v := range roleMap[tagVal.Name] {
 				switch {
 				case v == "notEmpty":
 					if isBlank(val) {
 						return errors.New(tagVal.Name + "值不能为空")
+					}
+				case strings.Split(v, "=")[0] == "regexp":
+					if !regexpMatch(strings.Split(v, "=")[1], val.String()) {
+						return errors.New(tagVal.Name + "格式校验不通过")
 					}
 				case compareMap[strings.Split(v, "=")[0]]:
 					if !compareVerify(val, v) {
@@ -153,7 +172,9 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 
 func compareVerify(value reflect.Value, VerifyStr string) bool {
 	switch value.Kind() {
-	case reflect.String, reflect.Slice, reflect.Array:
+	case reflect.String:
+		return compare(len([]rune(value.String())), VerifyStr)
+	case reflect.Slice, reflect.Array:
 		return compare(value.Len(), VerifyStr)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		return compare(value.Uint(), VerifyStr)
@@ -174,7 +195,7 @@ func compareVerify(value reflect.Value, VerifyStr string) bool {
 
 func isBlank(value reflect.Value) bool {
 	switch value.Kind() {
-	case reflect.String:
+	case reflect.String, reflect.Slice:
 		return value.Len() == 0
 	case reflect.Bool:
 		return !value.Bool()
@@ -266,4 +287,8 @@ func compare(value interface{}, VerifyStr string) bool {
 	default:
 		return false
 	}
+}
+
+func regexpMatch(rule, matchStr string) bool {
+	return regexp.MustCompile(rule).MatchString(matchStr)
 }

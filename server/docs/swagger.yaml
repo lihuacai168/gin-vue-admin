@@ -2,13 +2,15 @@ basePath: /
 definitions:
   config.AliyunOSS:
     properties:
-      accessKeyId:
+      access-key-id:
         type: string
-      accessKeySecret:
+      access-key-secret:
         type: string
-      bucketName:
+      base-path:
         type: string
-      bucketUrl:
+      bucket-name:
+        type: string
+      bucket-url:
         type: string
       endpoint:
         type: string
@@ -19,58 +21,120 @@ definitions:
         type: string
       server:
         type: string
-      serverApi:
+      server-api:
         type: string
-      serverInitialize:
+      server-initialize:
         type: string
-      serverModel:
+      server-model:
         type: string
-      serverRequest:
+      server-plug:
         type: string
-      serverRouter:
+      server-request:
         type: string
-      serverService:
+      server-router:
         type: string
+      server-service:
+        type: string
+      transfer-restart:
+        type: boolean
       web:
         type: string
-      webApi:
+      web-api:
         type: string
-      webFlow:
+      web-form:
         type: string
-      webForm:
+      web-table:
         type: string
-      webTable:
+    type: object
+  config.AwsS3:
+    properties:
+      base-url:
+        type: string
+      bucket:
+        type: string
+      disable-ssl:
+        type: boolean
+      endpoint:
+        type: string
+      path-prefix:
+        type: string
+      region:
+        type: string
+      s3-force-path-style:
+        type: boolean
+      secret-id:
+        type: string
+      secret-key:
+        type: string
+    type: object
+  config.CORS:
+    properties:
+      mode:
+        type: string
+      whitelist:
+        items:
+          $ref: '#/definitions/config.CORSWhitelist'
+        type: array
+    type: object
+  config.CORSWhitelist:
+    properties:
+      allow-credentials:
+        type: boolean
+      allow-headers:
+        type: string
+      allow-methods:
+        type: string
+      allow-origin:
+        type: string
+      expose-headers:
         type: string
     type: object
   config.Captcha:
     properties:
-      imgHeight:
+      img-height:
+        description: 验证码高度
         type: integer
-      imgWidth:
+      img-width:
+        description: 验证码宽度
         type: integer
-      keyLong:
+      key-long:
+        description: 验证码长度
         type: integer
     type: object
-  config.Casbin:
+  config.Detail:
     properties:
-      modelPath:
+      compareField:
+        description: 需要比较时间的字段
+        type: string
+      interval:
+        description: 时间间隔
+        type: string
+      tableName:
+        description: 需要清理的表名
         type: string
     type: object
   config.Email:
     properties:
       from:
+        description: 收件人
         type: string
       host:
+        description: 服务器地址
         type: string
-      isSSL:
+      is-ssl:
+        description: 是否SSL
         type: boolean
       nickname:
+        description: 昵称
         type: string
       port:
+        description: 端口
         type: integer
       secret:
+        description: 密钥
         type: string
       to:
+        description: 收件人:多个以英文逗号分隔
         type: string
     type: object
   config.Excel:
@@ -78,473 +142,437 @@ definitions:
       dir:
         type: string
     type: object
+  config.HuaWeiObs:
+    properties:
+      access-key:
+        type: string
+      bucket:
+        type: string
+      endpoint:
+        type: string
+      path:
+        type: string
+      secret-key:
+        type: string
+    type: object
   config.JWT:
     properties:
-      bufferTime:
-        type: integer
-      expiresTime:
-        type: integer
-      signingKey:
+      buffer-time:
+        description: 缓冲时间
+        type: string
+      expires-time:
+        description: 过期时间
+        type: string
+      issuer:
+        description: 签发者
+        type: string
+      signing-key:
+        description: jwt签名
         type: string
     type: object
   config.Local:
     properties:
       path:
+        description: 本地文件访问路径
+        type: string
+      store-path:
+        description: 本地文件存储路径
         type: string
     type: object
   config.Mysql:
     properties:
       config:
+        description: 高级配置
         type: string
-      dbname:
+      db-name:
+        description: 数据库名
         type: string
-      logMode:
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
         type: boolean
-      logZap:
-        type: string
-      maxIdleConns:
+      max-idle-conns:
+        description: 空闲中的最大连接数
         type: integer
-      maxOpenConns:
+      max-open-conns:
+        description: 打开到数据库的最大连接数
         type: integer
       password:
+        description: 数据库密码
         type: string
       path:
+        description: 服务器地址:端口
+        type: string
+      port:
+        description: :端口
         type: string
       username:
+        description: 数据库用户名
+        type: string
+    type: object
+  config.Pgsql:
+    properties:
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        description: 服务器地址:端口
+        type: string
+      port:
+        description: :端口
+        type: string
+      username:
+        description: 数据库用户名
         type: string
     type: object
   config.Qiniu:
     properties:
-      accessKey:
+      access-key:
+        description: 秘钥AK
         type: string
       bucket:
+        description: 空间名称
         type: string
-      imgPath:
+      img-path:
+        description: CDN加速域名
         type: string
-      secretKey:
+      secret-key:
+        description: 秘钥SK
         type: string
-      useCdnDomains:
+      use-cdn-domains:
+        description: 上传是否使用CDN上传加速
         type: boolean
-      useHttps:
+      use-https:
+        description: 是否使用https
         type: boolean
       zone:
+        description: 存储区域
         type: string
     type: object
   config.Redis:
     properties:
       addr:
+        description: 服务器地址:端口
         type: string
       db:
+        description: redis的哪个数据库
         type: integer
       password:
+        description: 密码
         type: string
     type: object
   config.Server:
     properties:
-      aliyunOSS:
+      aliyun-oss:
         $ref: '#/definitions/config.AliyunOSS'
-        type: object
-      autoCode:
+      autocode:
         $ref: '#/definitions/config.Autocode'
         description: auto
-        type: object
+      aws-s3:
+        $ref: '#/definitions/config.AwsS3'
       captcha:
         $ref: '#/definitions/config.Captcha'
-        type: object
-      casbin:
-        $ref: '#/definitions/config.Casbin'
-        type: object
+      cors:
+        $ref: '#/definitions/config.CORS'
+        description: 跨域配置
+      db-list:
+        items:
+          $ref: '#/definitions/config.SpecializedDB'
+        type: array
       email:
         $ref: '#/definitions/config.Email'
-        type: object
       excel:
         $ref: '#/definitions/config.Excel'
-        type: object
+      hua-wei-obs:
+        $ref: '#/definitions/config.HuaWeiObs'
       jwt:
         $ref: '#/definitions/config.JWT'
-        type: object
       local:
         $ref: '#/definitions/config.Local'
         description: oss
-        type: object
       mysql:
         $ref: '#/definitions/config.Mysql'
         description: gorm
-        type: object
+      pgsql:
+        $ref: '#/definitions/config.Pgsql'
       qiniu:
         $ref: '#/definitions/config.Qiniu'
-        type: object
       redis:
         $ref: '#/definitions/config.Redis'
-        type: object
       system:
         $ref: '#/definitions/config.System'
-        type: object
-      tencentCOS:
+      tencent-cos:
         $ref: '#/definitions/config.TencentCOS'
-        type: object
+      timer:
+        $ref: '#/definitions/config.Timer'
       zap:
         $ref: '#/definitions/config.Zap'
-        type: object
+    type: object
+  config.SpecializedDB:
+    properties:
+      alias-name:
+        type: string
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      disable:
+        type: boolean
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        description: 服务器地址:端口
+        type: string
+      port:
+        description: :端口
+        type: string
+      type:
+        type: string
+      username:
+        description: 数据库用户名
+        type: string
     type: object
   config.System:
     properties:
       addr:
+        description: 端口值
         type: integer
-      dbType:
+      db-type:
+        description: 数据库类型:mysql(默认)|sqlite|sqlserver|postgresql
         type: string
       env:
+        description: 环境值
         type: string
-      ossType:
+      iplimit-count:
+        type: integer
+      iplimit-time:
+        type: integer
+      oss-type:
+        description: Oss类型
         type: string
-      useMultipoint:
+      use-multipoint:
+        description: 多点登录拦截
+        type: boolean
+      use-redis:
+        description: 使用redis
         type: boolean
     type: object
   config.TencentCOS:
     properties:
-      baseURL:
+      base-url:
         type: string
       bucket:
         type: string
-      pathPrefix:
+      path-prefix:
         type: string
       region:
         type: string
-      secretID:
+      secret-id:
         type: string
-      secretKey:
+      secret-key:
         type: string
+    type: object
+  config.Timer:
+    properties:
+      detail:
+        items:
+          $ref: '#/definitions/config.Detail'
+        type: array
+      spec:
+        description: CRON表达式
+        type: string
+      start:
+        description: 是否启用
+        type: boolean
+      with_seconds:
+        description: 是否精确到秒
+        type: boolean
     type: object
   config.Zap:
     properties:
       director:
+        description: 日志文件夹
         type: string
-      encodeLevel:
+      encode-level:
+        description: 编码级
         type: string
       format:
+        description: 输出
         type: string
       level:
+        description: 级别
         type: string
-      linkName:
-        type: string
-      logInConsole:
+      log-in-console:
+        description: 输出控制台
         type: boolean
+      max-age:
+        description: 日志留存时间
+        type: integer
       prefix:
+        description: 日志前缀
         type: string
-      showLine:
+      show-line:
+        description: 显示行
         type: boolean
-      stacktraceKey:
+      stacktrace-key:
+        description: 栈名
         type: string
     type: object
-  model.AutoCodeStruct:
-    properties:
-      abbreviation:
-        type: string
-      autoCreateApiToSql:
-        type: boolean
-      autoMoveFile:
-        type: boolean
-      description:
-        type: string
-      fields:
-        items:
-          $ref: '#/definitions/model.Field'
-        type: array
-      packageName:
-        type: string
-      structName:
-        type: string
-      tableName:
-        type: string
-    type: object
-  model.ExaCustomer:
+  example.ExaCustomer:
     properties:
       createdAt:
+        description: 创建时间
         type: string
       customerName:
+        description: 客户名
         type: string
       customerPhoneData:
+        description: 客户手机号
         type: string
       id:
+        description: 主键ID
         type: integer
       sysUser:
-        $ref: '#/definitions/model.SysUser'
-        type: object
+        $ref: '#/definitions/system.SysUser'
+        description: 管理详情
       sysUserAuthorityID:
-        type: string
+        description: 管理角色ID
+        type: integer
       sysUserId:
+        description: 管理ID
         type: integer
       updatedAt:
+        description: 更新时间
         type: string
     type: object
-  model.ExaFileUploadAndDownload:
+  example.ExaFile:
     properties:
+      chunkTotal:
+        type: integer
       createdAt:
+        description: 创建时间
+        type: string
+      exaFileChunk:
+        items:
+          $ref: '#/definitions/example.ExaFileChunk'
+        type: array
+      fileMd5:
+        type: string
+      fileName:
+        type: string
+      filePath:
         type: string
       id:
+        description: 主键ID
         type: integer
-      key:
-        type: string
-      name:
-        type: string
-      tag:
-        type: string
+      isFinish:
+        type: boolean
       updatedAt:
-        type: string
-      url:
+        description: 更新时间
         type: string
     type: object
-  model.ExcelInfo:
+  example.ExaFileChunk:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      exaFileID:
+        type: integer
+      fileChunkNumber:
+        type: integer
+      fileChunkPath:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  example.ExaFileUploadAndDownload:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      key:
+        description: 编号
+        type: string
+      name:
+        description: 文件名
+        type: string
+      tag:
+        description: 文件标签
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      url:
+        description: 文件地址
+        type: string
+    type: object
+  example.ExcelInfo:
     properties:
       fileName:
+        description: 文件名
         type: string
       infoList:
         items:
-          $ref: '#/definitions/model.SysBaseMenu'
+          $ref: '#/definitions/system.SysBaseMenu'
         type: array
-    type: object
-  model.Field:
-    properties:
-      columnName:
-        type: string
-      comment:
-        type: string
-      dataType:
-        type: string
-      dataTypeLong:
-        type: string
-      dictType:
-        type: string
-      fieldDesc:
-        type: string
-      fieldJson:
-        type: string
-      fieldName:
-        type: string
-      fieldSearchType:
-        type: string
-      fieldType:
-        type: string
-    type: object
-  model.SysApi:
-    properties:
-      apiGroup:
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      method:
-        type: string
-      path:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  model.SysAuthority:
-    properties:
-      authorityId:
-        type: string
-      authorityName:
-        type: string
-      children:
-        items:
-          $ref: '#/definitions/model.SysAuthority'
-        type: array
-      createdAt:
-        type: string
-      dataAuthorityId:
-        items:
-          $ref: '#/definitions/model.SysAuthority'
-        type: array
-      defaultRouter:
-        type: string
-      deletedAt:
-        type: string
-      menus:
-        items:
-          $ref: '#/definitions/model.SysBaseMenu'
-        type: array
-      parentId:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  model.SysBaseMenu:
-    properties:
-      authoritys:
-        items:
-          $ref: '#/definitions/model.SysAuthority'
-        type: array
-      children:
-        items:
-          $ref: '#/definitions/model.SysBaseMenu'
-        type: array
-      closeTab:
-        type: boolean
-      component:
-        type: string
-      createdAt:
-        type: string
-      defaultMenu:
-        type: boolean
-      hidden:
-        type: boolean
-      icon:
-        type: string
-      id:
-        type: integer
-      keepAlive:
-        type: boolean
-      name:
-        type: string
-      parameters:
-        items:
-          $ref: '#/definitions/model.SysBaseMenuParameter'
-        type: array
-      parentId:
-        type: string
-      path:
-        type: string
-      sort:
-        type: integer
-      title:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  model.SysBaseMenuParameter:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      sysBaseMenuID:
-        type: integer
-      type:
-        type: string
-      updatedAt:
-        type: string
-      value:
-        type: string
-    type: object
-  model.SysDictionary:
-    properties:
-      createdAt:
-        type: string
-      desc:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      status:
-        type: boolean
-      sysDictionaryDetails:
-        items:
-          $ref: '#/definitions/model.SysDictionaryDetail'
-        type: array
-      type:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  model.SysDictionaryDetail:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      label:
-        type: string
-      sort:
-        type: integer
-      status:
-        type: boolean
-      sysDictionaryID:
-        type: integer
-      updatedAt:
-        type: string
-      value:
-        type: integer
-    type: object
-  model.SysOperationRecord:
-    properties:
-      agent:
-        type: string
-      body:
-        type: string
-      createdAt:
-        type: string
-      error_message:
-        type: string
-      id:
-        type: integer
-      ip:
-        type: string
-      latency:
-        type: string
-      method:
-        type: string
-      path:
-        type: string
-      resp:
-        type: string
-      status:
-        type: integer
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/model.SysUser'
-        type: object
-      user_id:
-        type: integer
-    type: object
-  model.SysUser:
-    properties:
-      authority:
-        $ref: '#/definitions/model.SysAuthority'
-        type: object
-      authorityId:
-        type: string
-      createdAt:
-        type: string
-      headerImg:
-        type: string
-      id:
-        type: integer
-      nickName:
-        type: string
-      updatedAt:
-        type: string
-      userName:
-        type: string
-      uuid:
-        type: string
-    type: object
-  model.System:
-    properties:
-      config:
-        $ref: '#/definitions/config.Server'
-        type: object
     type: object
   request.AddMenuAuthorityInfo:
     properties:
       authorityId:
-        type: string
+        description: 角色ID
+        type: integer
       menus:
         items:
-          $ref: '#/definitions/model.SysBaseMenu'
+          $ref: '#/definitions/system.SysBaseMenu'
         type: array
     type: object
   request.CasbinInReceive:
     properties:
       authorityId:
-        type: string
+        description: 权限id
+        type: integer
       casbinInfos:
         items:
           $ref: '#/definitions/request.CasbinInfo'
@@ -553,17 +581,19 @@ definitions:
   request.CasbinInfo:
     properties:
       method:
+        description: 方法
         type: string
       path:
+        description: 路径
         type: string
     type: object
-  request.ChangePasswordStruct:
+  request.ChangePasswordReq:
     properties:
       newPassword:
+        description: 新密码
         type: string
       password:
-        type: string
-      username:
+        description: 密码
         type: string
     type: object
   request.Empty:
@@ -571,12 +601,14 @@ definitions:
   request.GetAuthorityId:
     properties:
       authorityId:
-        type: string
+        description: 角色ID
+        type: integer
     type: object
   request.GetById:
     properties:
       id:
-        type: number
+        description: 主键ID
+        type: integer
     type: object
   request.IdsReq:
     properties:
@@ -588,14 +620,22 @@ definitions:
   request.InitDB:
     properties:
       dbName:
+        description: 数据库名
+        type: string
+      dbType:
+        description: 数据库类型
         type: string
       host:
+        description: 服务器地址
         type: string
       password:
+        description: 数据库密码
         type: string
       port:
+        description: 数据库连接端口
         type: string
       userName:
+        description: 数据库用户名
         type: string
     required:
     - dbName
@@ -604,149 +644,755 @@ definitions:
   request.Login:
     properties:
       captcha:
+        description: 验证码
         type: string
       captchaId:
+        description: 验证码ID
         type: string
       password:
+        description: 密码
         type: string
       username:
+        description: 用户名
         type: string
     type: object
   request.PageInfo:
     properties:
+      keyword:
+        description: 关键字
+        type: string
       page:
+        description: 页码
         type: integer
       pageSize:
+        description: 每页大小
+        type: integer
+    type: object
+  request.Register:
+    properties:
+      authorityId:
+        type: integer
+      authorityIds:
+        items:
+          type: integer
+        type: array
+      enable:
+        type: integer
+      headerImg:
+        type: string
+      nickName:
+        type: string
+      passWord:
+        type: string
+      userName:
+        type: string
+    type: object
+  request.RollBack:
+    properties:
+      deleteTable:
+        description: 是否删除表
+        type: boolean
+      id:
+        description: 主键ID
         type: integer
     type: object
   request.SearchApiParams:
     properties:
       apiGroup:
+        description: api组
         type: string
       createdAt:
+        description: 创建时间
         type: string
       desc:
+        description: 排序方式:升序false(默认)|降序true
         type: boolean
       description:
+        description: api中文描述
         type: string
       id:
+        description: 主键ID
         type: integer
+      keyword:
+        description: 关键字
+        type: string
       method:
+        description: 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
         type: string
       orderKey:
+        description: 排序
         type: string
       page:
+        description: 页码
         type: integer
       pageSize:
+        description: 每页大小
         type: integer
       path:
+        description: api路径
         type: string
       updatedAt:
+        description: 更新时间
         type: string
     type: object
   request.SetUserAuth:
     properties:
       authorityId:
-        type: string
-      uuid:
-        type: string
-    type: object
-  request.SysDictionaryDetailSearch:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      label:
-        type: string
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      sort:
-        type: integer
-      status:
-        type: boolean
-      sysDictionaryID:
-        type: integer
-      updatedAt:
-        type: string
-      value:
+        description: 角色ID
         type: integer
     type: object
-  request.SysDictionarySearch:
+  request.SetUserAuthorities:
     properties:
-      createdAt:
-        type: string
-      desc:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      status:
-        type: boolean
-      sysDictionaryDetails:
+      authorityIds:
+        description: 角色ID
         items:
-          $ref: '#/definitions/model.SysDictionaryDetail'
+          type: integer
         type: array
-      type:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  request.SysOperationRecordSearch:
-    properties:
-      agent:
-        type: string
-      body:
-        type: string
-      createdAt:
-        type: string
-      error_message:
-        type: string
       id:
         type: integer
-      ip:
-        type: string
-      latency:
-        type: string
-      method:
+    type: object
+  request.SysAuthorityBtnReq:
+    properties:
+      authorityId:
+        type: integer
+      menuID:
+        type: integer
+      selected:
+        items:
+          type: integer
+        type: array
+    type: object
+  request.SysAutoHistory:
+    properties:
+      keyword:
+        description: 关键字
         type: string
       page:
+        description: 页码
         type: integer
       pageSize:
+        description: 每页大小
         type: integer
-      path:
+    type: object
+  response.Email:
+    properties:
+      body:
+        description: 邮件内容
         type: string
-      resp:
+      subject:
+        description: 邮件标题
         type: string
-      status:
+      to:
+        description: 邮件发送给谁
+        type: string
+    type: object
+  response.ExaCustomerResponse:
+    properties:
+      customer:
+        $ref: '#/definitions/example.ExaCustomer'
+    type: object
+  response.ExaFileResponse:
+    properties:
+      file:
+        $ref: '#/definitions/example.ExaFileUploadAndDownload'
+    type: object
+  response.FilePathResponse:
+    properties:
+      filePath:
+        type: string
+    type: object
+  response.FileResponse:
+    properties:
+      file:
+        $ref: '#/definitions/example.ExaFile'
+    type: object
+  response.LoginResponse:
+    properties:
+      expiresAt:
         type: integer
-      updatedAt:
+      token:
         type: string
       user:
-        $ref: '#/definitions/model.SysUser'
+        $ref: '#/definitions/system.SysUser'
+    type: object
+  response.PageResult:
+    properties:
+      list:
         type: object
-      user_id:
+      page:
         type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.PolicyPathResponse:
+    properties:
+      paths:
+        items:
+          $ref: '#/definitions/request.CasbinInfo'
+        type: array
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  response.SysAPIListResponse:
+    properties:
+      apis:
+        items:
+          $ref: '#/definitions/system.SysApi'
+        type: array
+    type: object
+  response.SysAPIResponse:
+    properties:
+      api:
+        $ref: '#/definitions/system.SysApi'
+    type: object
+  response.SysAuthorityBtnRes:
+    properties:
+      selected:
+        items:
+          type: integer
+        type: array
     type: object
   response.SysAuthorityCopyResponse:
     properties:
       authority:
-        $ref: '#/definitions/model.SysAuthority'
-        type: object
+        $ref: '#/definitions/system.SysAuthority'
       oldAuthorityId:
+        description: 旧角色ID
+        type: integer
+    type: object
+  response.SysAuthorityResponse:
+    properties:
+      authority:
+        $ref: '#/definitions/system.SysAuthority'
+    type: object
+  response.SysBaseMenuResponse:
+    properties:
+      menu:
+        $ref: '#/definitions/system.SysBaseMenu'
+    type: object
+  response.SysBaseMenusResponse:
+    properties:
+      menus:
+        items:
+          $ref: '#/definitions/system.SysBaseMenu'
+        type: array
+    type: object
+  response.SysCaptchaResponse:
+    properties:
+      captchaId:
         type: string
+      captchaLength:
+        type: integer
+      picPath:
+        type: string
+    type: object
+  response.SysConfigResponse:
+    properties:
+      config:
+        $ref: '#/definitions/config.Server'
+    type: object
+  response.SysMenusResponse:
+    properties:
+      menus:
+        items:
+          $ref: '#/definitions/system.SysMenu'
+        type: array
+    type: object
+  response.SysUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/system.SysUser'
+    type: object
+  system.AutoCodeStruct:
+    properties:
+      abbreviation:
+        description: Struct简称
+        type: string
+      autoCreateApiToSql:
+        description: 是否自动创建api
+        type: boolean
+      autoCreateResource:
+        description: 是否自动创建资源标识
+        type: boolean
+      autoMoveFile:
+        description: 是否自动移动文件
+        type: boolean
+      description:
+        description: Struct中文名称
+        type: string
+      fields:
+        items:
+          $ref: '#/definitions/system.Field'
+        type: array
+      hasTimer:
+        type: boolean
+      humpPackageName:
+        description: go文件名称
+        type: string
+      package:
+        type: string
+      packageName:
+        description: 文件名称
+        type: string
+      structName:
+        description: Struct名称
+        type: string
+      tableName:
+        description: 表名
+        type: string
+    type: object
+  system.Field:
+    properties:
+      clearable:
+        description: 是否可清空
+        type: boolean
+      columnName:
+        description: 数据库字段
+        type: string
+      comment:
+        description: 数据库字段描述
+        type: string
+      dataTypeLong:
+        description: 数据库字段长度
+        type: string
+      dictType:
+        description: 字典
+        type: string
+      errorText:
+        description: 校验失败文字
+        type: string
+      fieldDesc:
+        description: 中文名
+        type: string
+      fieldJson:
+        description: FieldJson
+        type: string
+      fieldName:
+        description: Field名
+        type: string
+      fieldSearchType:
+        description: 搜索条件
+        type: string
+      fieldType:
+        description: Field数据类型
+        type: string
+      require:
+        description: 是否必填
+        type: boolean
+    type: object
+  system.SysApi:
+    properties:
+      apiGroup:
+        description: api组
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: api中文描述
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      method:
+        description: 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
+        type: string
+      path:
+        description: api路径
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysAuthority:
+    properties:
+      authorityId:
+        description: 角色ID
+        type: integer
+      authorityName:
+        description: 角色名
+        type: string
+      children:
+        items:
+          $ref: '#/definitions/system.SysAuthority'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      dataAuthorityId:
+        items:
+          $ref: '#/definitions/system.SysAuthority'
+        type: array
+      defaultRouter:
+        description: 默认菜单(默认dashboard)
+        type: string
+      deletedAt:
+        type: string
+      menus:
+        items:
+          $ref: '#/definitions/system.SysBaseMenu'
+        type: array
+      parentId:
+        description: 父角色ID
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysAutoCode:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      desc:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      label:
+        type: string
+      packageName:
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysBaseMenu:
+    properties:
+      authoritys:
+        items:
+          $ref: '#/definitions/system.SysAuthority'
+        type: array
+      children:
+        items:
+          $ref: '#/definitions/system.SysBaseMenu'
+        type: array
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
+      component:
+        description: 对应前端文件路径
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
+      hidden:
+        description: 是否在列表隐藏
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      keepAlive:
+        description: 是否缓存
+        type: boolean
+      menuBtn:
+        items:
+          $ref: '#/definitions/system.SysBaseMenuBtn'
+        type: array
+      name:
+        description: 路由name
+        type: string
+      parameters:
+        items:
+          $ref: '#/definitions/system.SysBaseMenuParameter'
+        type: array
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 路由path
+        type: string
+      sort:
+        description: 排序标记
+        type: integer
+      title:
+        description: 菜单名
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysBaseMenuBtn:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      desc:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      name:
+        type: string
+      sysBaseMenuID:
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysBaseMenuParameter:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      key:
+        description: 地址栏携带参数的key
+        type: string
+      sysBaseMenuID:
+        type: integer
+      type:
+        description: 地址栏携带参数为params还是query
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      value:
+        description: 地址栏携带参数的值
+        type: string
+    type: object
+  system.SysDictionary:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      desc:
+        description: 描述
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      name:
+        description: 字典名（中）
+        type: string
+      status:
+        description: 状态
+        type: boolean
+      sysDictionaryDetails:
+        items:
+          $ref: '#/definitions/system.SysDictionaryDetail'
+        type: array
+      type:
+        description: 字典名（英）
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysDictionaryDetail:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      label:
+        description: 展示值
+        type: string
+      sort:
+        description: 排序标记
+        type: integer
+      status:
+        description: 启用状态
+        type: boolean
+      sysDictionaryID:
+        description: 关联标记
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      value:
+        description: 字典值
+        type: integer
+    type: object
+  system.SysMenu:
+    properties:
+      authoritys:
+        items:
+          $ref: '#/definitions/system.SysAuthority'
+        type: array
+      btns:
+        additionalProperties:
+          type: integer
+        type: object
+      children:
+        items:
+          $ref: '#/definitions/system.SysMenu'
+        type: array
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
+      component:
+        description: 对应前端文件路径
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
+      hidden:
+        description: 是否在列表隐藏
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      keepAlive:
+        description: 是否缓存
+        type: boolean
+      menuBtn:
+        items:
+          $ref: '#/definitions/system.SysBaseMenuBtn'
+        type: array
+      menuId:
+        type: string
+      name:
+        description: 路由name
+        type: string
+      parameters:
+        items:
+          $ref: '#/definitions/system.SysBaseMenuParameter'
+        type: array
+      parentId:
+        description: 父菜单ID
+        type: string
+      path:
+        description: 路由path
+        type: string
+      sort:
+        description: 排序标记
+        type: integer
+      title:
+        description: 菜单名
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysOperationRecord:
+    properties:
+      agent:
+        description: 代理
+        type: string
+      body:
+        description: 请求Body
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      error_message:
+        description: 错误信息
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      ip:
+        description: 请求ip
+        type: string
+      latency:
+        description: 延迟
+        type: string
+      method:
+        description: 请求方法
+        type: string
+      path:
+        description: 请求路径
+        type: string
+      resp:
+        description: 响应Body
+        type: string
+      status:
+        description: 请求状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      user:
+        $ref: '#/definitions/system.SysUser'
+      user_id:
+        description: 用户id
+        type: integer
+    type: object
+  system.SysUser:
+    properties:
+      activeColor:
+        description: 活跃颜色
+        type: string
+      authorities:
+        items:
+          $ref: '#/definitions/system.SysAuthority'
+        type: array
+      authority:
+        $ref: '#/definitions/system.SysAuthority'
+      authorityId:
+        description: 用户角色ID
+        type: integer
+      baseColor:
+        description: 基础颜色
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      email:
+        description: 用户邮箱
+        type: string
+      enable:
+        description: 用户是否被冻结 1正常 2冻结
+        type: integer
+      headerImg:
+        description: 用户头像
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      nickName:
+        description: 用户昵称
+        type: string
+      phone:
+        description: 用户手机号
+        type: string
+      sideMode:
+        description: 用户侧边主题
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      userName:
+        description: 用户登录名
+        type: string
+      uuid:
+        description: 用户UUID
+        type: string
+    type: object
+  system.System:
+    properties:
+      config:
+        $ref: '#/definitions/config.Server'
     type: object
 info:
   contact: {}
   description: This is a sample Server pets
-  license: {}
   title: Swagger Example API
   version: 0.0.1
 paths:
@@ -760,15 +1406,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysApi'
-          type: object
+          $ref: '#/definitions/system.SysApi'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 创建基础api
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建基础api
@@ -784,15 +1434,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysApi'
-          type: object
+          $ref: '#/definitions/system.SysApi'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除api
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除api
@@ -809,14 +1463,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.IdsReq'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除选中Api
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除选中Api
@@ -830,9 +1488,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取所有的Api 不分页,返回包括api列表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAPIListResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取所有的Api 不分页
@@ -849,14 +1514,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.GetById'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 根据id获取api,返回包括api详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAPIResponse'
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 根据id获取api
@@ -873,14 +1542,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.SearchApiParams'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取API列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取API列表
@@ -896,18 +1571,22 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysApi'
-          type: object
+          $ref: '#/definitions/system.SysApi'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"修改成功"}'
+          description: 修改基础api
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
-      summary: 创建基础api
+      summary: 修改基础api
       tags:
       - SysApi
   /authority/copyAuthority:
@@ -921,14 +1600,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/response.SysAuthorityCopyResponse'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"拷贝成功"}'
+          description: 拷贝角色,返回包括系统角色详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAuthorityResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 拷贝角色
@@ -944,15 +1629,21 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysAuthority'
-          type: object
+          $ref: '#/definitions/system.SysAuthority'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 创建角色,返回包括系统角色详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAuthorityResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建角色
@@ -968,15 +1659,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysAuthority'
-          type: object
+          $ref: '#/definitions/system.SysAuthority'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除角色
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除角色
@@ -993,14 +1688,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.PageInfo'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取角色列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取角色列表
@@ -1016,15 +1717,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysAuthority'
-          type: object
+          $ref: '#/definitions/system.SysAuthority'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"设置成功"}'
+          description: 设置角色资源权限
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 设置角色资源权限
@@ -1040,20 +1745,167 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysAuthority'
-          type: object
+          $ref: '#/definitions/system.SysAuthority'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新角色信息,返回包括系统角色详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAuthorityResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新角色信息
       tags:
       - Authority
+  /authorityBtn/canRemoveAuthorityBtn:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置权限按钮
+      tags:
+      - AuthorityBtn
+  /authorityBtn/getAuthorityBtn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单id, 角色id, 选中的按钮id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SysAuthorityBtnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysAuthorityBtnRes'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取权限按钮
+      tags:
+      - AuthorityBtn
+  /authorityBtn/setAuthorityBtn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单id, 角色id, 选中的按钮id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SysAuthorityBtnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置权限按钮
+      tags:
+      - AuthorityBtn
+  /autoCode/createPackage:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建package
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建package
+      tags:
+      - AutoCode
+  /autoCode/createPlug:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: plug
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 安装插件成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    type: object
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 安装插件
+      tags:
+      - AutoCode
   /autoCode/createTemp:
     post:
       consumes:
@@ -1064,8 +1916,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.AutoCodeStruct'
-          type: object
+          $ref: '#/definitions/system.AutoCodeStruct'
       produces:
       - application/json
       responses:
@@ -1078,6 +1929,65 @@ paths:
       summary: 自动代码模板
       tags:
       - AutoCode
+  /autoCode/delPackage:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建package
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除package
+      tags:
+      - AutoCode
+  /autoCode/delSysHistory:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除回滚记录
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除回滚记录
+      tags:
+      - AutoCode
   /autoCode/getColumn:
     get:
       consumes:
@@ -1086,9 +1996,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取当前表所有字段
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取当前表所有字段
@@ -1102,12 +2020,105 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取当前所有数据库
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取当前所有数据库
+      tags:
+      - AutoCode
+  /autoCode/getMeta:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取meta信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取meta信息
+      tags:
+      - AutoCode
+  /autoCode/getPackage:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取package
+      tags:
+      - AutoCode
+  /autoCode/getSysHistory:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SysAutoHistory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询回滚记录,返回包括列表,总数,页码,每页数量
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询回滚记录
       tags:
       - AutoCode
   /autoCode/getTables:
@@ -1118,9 +2129,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取当前数据库所有表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取当前数据库所有表
@@ -1136,18 +2155,53 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.AutoCodeStruct'
-          type: object
+          $ref: '#/definitions/system.AutoCodeStruct'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 预览创建后的代码
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 预览创建后的代码
+      tags:
+      - AutoCode
+  /autoCode/rollback:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.RollBack'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 回滚自动生成代码
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 回滚自动生成代码
       tags:
       - AutoCode
   /base/captcha:
@@ -1158,9 +2212,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"验证码获取成功"}'
+          description: 生成验证码,返回包括随机数id,base64,验证码长度
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysCaptchaResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 生成验证码
@@ -1175,14 +2236,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.Login'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"登陆成功"}'
+          description: 返回包括用户信息,token,过期时间
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginResponse'
+                msg:
+                  type: string
+              type: object
       summary: 用户登录
       tags:
       - Base
@@ -1197,14 +2264,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.CasbinInReceive'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新角色api权限
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新角色api权限
@@ -1221,14 +2292,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.CasbinInReceive'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取权限列表,返回包括casbin详情列表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PolicyPathResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取权限列表
@@ -1244,15 +2321,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ExaCustomer'
-          type: object
+          $ref: '#/definitions/example.ExaCustomer'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除客户
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除客户
@@ -1262,20 +2343,48 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 客户ID
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.ExaCustomer'
-          type: object
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 客户名
+        in: query
+        name: customerName
+        type: string
+      - description: 客户手机号
+        in: query
+        name: customerPhoneData
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 管理角色ID
+        in: query
+        name: sysUserAuthorityID
+        type: integer
+      - description: 管理ID
+        in: query
+        name: sysUserId
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取单一客户信息,返回包括客户详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ExaCustomerResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取单一客户信息
@@ -1290,15 +2399,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ExaCustomer'
-          type: object
+          $ref: '#/definitions/example.ExaCustomer'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 创建客户
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建客户
@@ -1313,15 +2426,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ExaCustomer'
-          type: object
+          $ref: '#/definitions/example.ExaCustomer'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新客户信息
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新客户信息
@@ -1332,20 +2449,32 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 页码, 每页大小
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.PageInfo'
-          type: object
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取权限客户列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取权限客户列表
@@ -1365,6 +2494,27 @@ paths:
       summary: 发送测试邮件
       tags:
       - System
+  /email/sendEmail:
+    post:
+      parameters:
+      - description: 发送邮件必须的参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/response.Email'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"发送成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 发送邮件
+      tags:
+      - System
   /excel/downloadTemplate:
     get:
       consumes:
@@ -1378,7 +2528,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200": {}
+        "200":
+          description: ""
       security:
       - ApiKeyAuth: []
       summary: 下载模板
@@ -1394,12 +2545,12 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ExcelInfo'
-          type: object
+          $ref: '#/definitions/example.ExcelInfo'
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
       security:
       - ApiKeyAuth: []
       summary: 导出Excel
@@ -1419,9 +2570,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"导入成功"}'
+          description: 导入Excel文件
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 导入Excel文件
@@ -1433,9 +2589,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"加载数据成功"}'
+          description: 加载Excel数据,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 加载Excel数据
@@ -1455,9 +2618,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"切片创建成功"}'
+          description: 断点续传到服务器
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 断点续传到服务器
@@ -1471,15 +2639,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ExaFileUploadAndDownload'
-          type: object
+          $ref: '#/definitions/example.ExaFileUploadAndDownload'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除文件
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除文件
@@ -1499,9 +2671,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"file uploaded, 文件创建成功"}'
+          description: 创建文件,返回包括文件路径
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.FilePathResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建文件
@@ -1518,14 +2697,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.PageInfo'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页文件列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页文件列表
@@ -1545,9 +2730,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"缓存切片删除成功"}'
+          description: 删除切片
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除切片
@@ -1567,9 +2757,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"上传成功"}'
+          description: 上传文件示例,返回包括文件详情
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ExaFileResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 上传文件示例
@@ -1581,9 +2778,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":0,"data":{},"msg":"探测完成"}'
+          description: 初始化用户数据库
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       summary: 初始化用户数据库
       tags:
       - CheckDB
@@ -1596,14 +2801,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.InitDB'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code":0,"data":{},"msg":"自动创建数据库成功"}'
+          description: 初始化用户数据库
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
       summary: 初始化用户数据库
       tags:
       - InitDB
@@ -1615,38 +2824,19 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"拉黑成功"}'
+          description: jwt加入黑名单
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: jwt加入黑名单
       tags:
       - Jwt
-  /menu/GetMenuAuthority:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 角色ID
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.GetAuthorityId'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 获取指定角色menu
-      tags:
-      - AuthorityMenu
   /menu/addBaseMenu:
     post:
       consumes:
@@ -1657,15 +2847,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysBaseMenu'
-          type: object
+          $ref: '#/definitions/system.SysBaseMenu'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"添加成功"}'
+          description: 新增菜单
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 新增菜单
@@ -1682,14 +2876,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.AddMenuAuthorityInfo'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"添加成功"}'
+          description: 增加menu和角色关联关系
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 增加menu和角色关联关系
@@ -1706,14 +2904,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.GetById'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除菜单
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除菜单
@@ -1730,14 +2932,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.GetById'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 根据id获取菜单,返回包括系统菜单列表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysBaseMenuResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 根据id获取菜单
@@ -1752,14 +2960,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.Empty'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取用户动态路由,返回包括系统菜单列表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysBaseMenusResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取用户动态路由
@@ -1774,17 +2988,54 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.Empty'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取用户动态路由,返回包括系统菜单详情列表
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysMenusResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取用户动态路由
+      tags:
+      - AuthorityMenu
+  /menu/getMenuAuthority:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetAuthorityId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取指定角色menu
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取指定角色menu
       tags:
       - AuthorityMenu
   /menu/getMenuList:
@@ -1798,14 +3049,20 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.PageInfo'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取基础menu列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取基础menu列表
@@ -1821,82 +3078,24 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysBaseMenu'
-          type: object
+          $ref: '#/definitions/system.SysBaseMenu'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新菜单
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新菜单
       tags:
       - Menu
-  /simpleUploader/checkFileMd5:
-    get:
-      parameters:
-      - description: md5
-        in: query
-        name: md5
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"查询成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 断点续传插件版示例
-      tags:
-      - SimpleUploader
-  /simpleUploader/mergeFileMd5:
-    get:
-      parameters:
-      - description: md5
-        in: query
-        name: md5
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"合并成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 合并文件
-      tags:
-      - SimpleUploader
-  /simpleUploader/upload:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: 断点续传插件版示例
-        in: formData
-        name: file
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"切片创建成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 断点续传插件版示例
-      tags:
-      - SimpleUploader
   /sysDictionary/createSysDictionary:
     post:
       consumes:
@@ -1907,15 +3106,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionary'
-          type: object
+          $ref: '#/definitions/system.SysDictionary'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 创建SysDictionary
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建SysDictionary
@@ -1931,15 +3134,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionary'
-          type: object
+          $ref: '#/definitions/system.SysDictionary'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除SysDictionary
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除SysDictionary
@@ -1950,20 +3157,49 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: ID或字典英名
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.SysDictionary'
-          type: object
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 描述
+        in: query
+        name: desc
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 字典名（中）
+        in: query
+        name: name
+        type: string
+      - description: 状态
+        in: query
+        name: status
+        type: boolean
+      - description: 字典名（英）
+        in: query
+        name: type
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          description: 用id查询SysDictionary
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 用id查询SysDictionary
@@ -1974,20 +3210,60 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 页码, 每页大小, 搜索条件
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.SysDictionarySearch'
-          type: object
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 描述
+        in: query
+        name: desc
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 字典名（中）
+        in: query
+        name: name
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 状态
+        in: query
+        name: status
+        type: boolean
+      - description: 字典名（英）
+        in: query
+        name: type
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取SysDictionary列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取SysDictionary列表
@@ -2003,15 +3279,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionary'
-          type: object
+          $ref: '#/definitions/system.SysDictionary'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新SysDictionary
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新SysDictionary
@@ -2027,15 +3307,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionaryDetail'
-          type: object
+          $ref: '#/definitions/system.SysDictionaryDetail'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          description: 创建SysDictionaryDetail
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建SysDictionaryDetail
@@ -2051,15 +3335,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionaryDetail'
-          type: object
+          $ref: '#/definitions/system.SysDictionaryDetail'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除SysDictionaryDetail
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除SysDictionaryDetail
@@ -2070,20 +3358,53 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 用id查询SysDictionaryDetail
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.SysDictionaryDetail'
-          type: object
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 展示值
+        in: query
+        name: label
+        type: string
+      - description: 排序标记
+        in: query
+        name: sort
+        type: integer
+      - description: 启用状态
+        in: query
+        name: status
+        type: boolean
+      - description: 关联标记
+        in: query
+        name: sysDictionaryID
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 字典值
+        in: query
+        name: value
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          description: 用id查询SysDictionaryDetail
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 用id查询SysDictionaryDetail
@@ -2094,20 +3415,64 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 页码, 每页大小, 搜索条件
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.SysDictionaryDetailSearch'
-          type: object
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 展示值
+        in: query
+        name: label
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序标记
+        in: query
+        name: sort
+        type: integer
+      - description: 启用状态
+        in: query
+        name: status
+        type: boolean
+      - description: 关联标记
+        in: query
+        name: sysDictionaryID
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 字典值
+        in: query
+        name: value
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取SysDictionaryDetail列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取SysDictionaryDetail列表
@@ -2123,15 +3488,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysDictionaryDetail'
-          type: object
+          $ref: '#/definitions/system.SysDictionaryDetail'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          description: 更新SysDictionaryDetail
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 更新SysDictionaryDetail
@@ -2147,15 +3516,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysOperationRecord'
-          type: object
+          $ref: '#/definitions/system.SysOperationRecord'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 创建SysOperationRecord
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 创建SysOperationRecord
@@ -2171,15 +3544,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysOperationRecord'
-          type: object
+          $ref: '#/definitions/system.SysOperationRecord'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除SysOperationRecord
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除SysOperationRecord
@@ -2196,14 +3573,18 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.IdsReq'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          description: 批量删除SysOperationRecord
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 批量删除SysOperationRecord
@@ -2214,20 +3595,73 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Id
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.SysOperationRecord'
-          type: object
+      - description: 代理
+        in: query
+        name: agent
+        type: string
+      - description: 请求Body
+        in: query
+        name: body
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 错误信息
+        in: query
+        name: error_message
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 请求ip
+        in: query
+        name: ip
+        type: string
+      - description: 延迟
+        in: query
+        name: latency
+        type: string
+      - description: 请求方法
+        in: query
+        name: method
+        type: string
+      - description: 请求路径
+        in: query
+        name: path
+        type: string
+      - description: 响应Body
+        in: query
+        name: resp
+        type: string
+      - description: 请求状态
+        in: query
+        name: status
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 用户id
+        in: query
+        name: user_id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          description: 用id查询SysOperationRecord
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 用id查询SysOperationRecord
@@ -2238,20 +3672,84 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 页码, 每页大小, 搜索条件
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.SysOperationRecordSearch'
-          type: object
+      - description: 代理
+        in: query
+        name: agent
+        type: string
+      - description: 请求Body
+        in: query
+        name: body
+        type: string
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 错误信息
+        in: query
+        name: error_message
+        type: string
+      - description: 主键ID
+        in: query
+        name: id
+        type: integer
+      - description: 请求ip
+        in: query
+        name: ip
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 延迟
+        in: query
+        name: latency
+        type: string
+      - description: 请求方法
+        in: query
+        name: method
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 请求路径
+        in: query
+        name: path
+        type: string
+      - description: 响应Body
+        in: query
+        name: resp
+        type: string
+      - description: 请求状态
+        in: query
+        name: status
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      - description: 用户id
+        in: query
+        name: user_id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取SysOperationRecord列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取SysOperationRecord列表
@@ -2263,9 +3761,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取服务器信息
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取服务器信息
@@ -2277,9 +3783,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 获取配置文件内容,返回包括系统配置
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysConfigResponse'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 获取配置文件内容
@@ -2291,9 +3804,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":0,"data":{},"msg":"重启系统成功"}'
+          description: 重启系统
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 重启系统
@@ -2307,37 +3825,102 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.System'
-          type: object
+          $ref: '#/definitions/system.System'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"设置成功"}'
+          description: 设置配置文件内容
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 设置配置文件内容
       tags:
       - System
-  /user/changePassword:
+  /user/SetSelfInfo:
     put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID, 用户名, 昵称, 头像链接
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置用户信息
+      tags:
+      - SysUser
+  /user/admin_register:
+    post:
+      parameters:
+      - description: 用户名, 昵称, 密码, 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户注册账号,返回包括用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysUserResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户注册账号
+      tags:
+      - SysUser
+  /user/changePassword:
+    post:
       parameters:
       - description: 用户名, 原密码, 新密码
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.ChangePasswordStruct'
-          type: object
+          $ref: '#/definitions/request.ChangePasswordReq'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"修改成功"}'
+          description: 用户修改密码
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 用户修改密码
@@ -2354,17 +3937,45 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.GetById'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          description: 删除用户
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 删除用户
+      tags:
+      - SysUser
+  /user/getUserInfo:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
       tags:
       - SysUser
   /user/getUserList:
@@ -2378,37 +3989,77 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.PageInfo'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          description: 分页获取用户列表,返回包括列表,总数,页码,每页数量
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 分页获取用户列表
       tags:
       - SysUser
-  /user/register:
+  /user/resetPassword:
     post:
       parameters:
-      - description: 用户名, 昵称, 密码, 角色ID
+      - description: ID
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysUser'
-          type: object
+          $ref: '#/definitions/system.SysUser'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"注册成功"}'
+          description: 重置用户密码
           schema:
-            type: string
-      summary: 用户注册账号
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 重置用户密码
+      tags:
+      - SysUser
+  /user/setUserAuthorities:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户UUID, 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetUserAuthorities'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置用户权限
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置用户权限
       tags:
       - SysUser
   /user/setUserAuthority:
@@ -2422,17 +4073,21 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.SetUserAuth'
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"修改成功"}'
+          description: 设置用户权限
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
-      summary: 设置用户权限
+      summary: 更改用户权限
       tags:
       - SysUser
   /user/setUserInfo:
@@ -2445,15 +4100,22 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.SysUser'
-          type: object
+          $ref: '#/definitions/system.SysUser'
       produces:
       - application/json
       responses:
         "200":
-          description: '{"success":true,"data":{},"msg":"设置成功"}'
+          description: 设置用户信息
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: 设置用户信息

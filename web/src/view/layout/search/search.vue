@@ -1,65 +1,133 @@
 <template>
   <div class="search-component">
     <transition name="el-fade-in-linear">
-      <div class="transition-box" style="display: inline-block; " v-show="show">
+      <div v-show="show" class="transition-box" style="display: inline-block;">
         <el-select
-          ref="search-input"
-          @blur="hiddenSearch"
-          @change="changeRouter"
+          ref="searchInput"
+          v-model="value"
           filterable
           placeholder="请选择"
-          v-model="value"
+          @blur="hiddenSearch"
+          @change="changeRouter"
         >
           <el-option
+            v-for="item in routerStore.routerList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
-            v-for="item in routerList"
-          ></el-option>
+          />
         </el-select>
       </div>
     </transition>
     <div
-      :style="{display:'inline-block',float:'right',width:'31px',textAlign:'left',fontSize:'16px',paddingTop:'2px'}"
+      v-if="btnShow"
       class="user-box"
     >
-      <i @click="$bus.$emit('reload')" :style="{cursor:'pointer'}" class="el-icon-refresh" />
+      <div class="gvaIcon gvaIcon-refresh" :class="[reload ? 'reloading' : '']" @click="handleReload" />
     </div>
-    <div :style="{display:'inline-block',float:'right'}" class="user-box">
-      <i :style="{cursor:'pointer'}" @click="showSearch()" class="el-icon-search search-icon"></i>
+    <div
+      v-if="btnShow"
+      class="user-box"
+    >
+      <div class="gvaIcon gvaIcon-search" @click="showSearch" />
+    </div>
+    <div
+      v-if="btnShow"
+      class="user-box"
+    >
+      <Screenfull class="search-icon" :style="{cursor:'pointer'}" />
+    </div>
+    <div
+      v-if="btnShow"
+      class="user-box"
+    >
+      <div class="service gvaIcon-customer-service" @click="toService" />
     </div>
   </div>
 </template>
-<script>
-import { mapGetters } from "vuex";
 
+<script>
 export default {
-  name: "searchComponent",
-  data() {
-    return {
-      value: "",
-      show: false
-    };
-  },
-  computed: {
-    ...mapGetters("router", ["routerList"])
-  },
-  methods: {
-    changeRouter() {
-      this.$router.push({ name: this.value });
-      this.value = "";
-    },
-    hiddenSearch() {
-      this.show = false;
-    },
-    showSearch() {
-      this.show = true;
-      this.$nextTick(() => {
-        this.$refs["search-input"].focus();
-      });
-    }
-  }
-};
+  name: 'BtnBox',
+}
 </script>
-<style lang="scss">
+
+<script setup>
+import Screenfull from '@/view/layout/screenfull/index.vue'
+import { emitter } from '@/utils/bus.js'
+import { ref, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRouterStore } from '@/pinia/modules/router'
+
+const router = useRouter()
+
+const routerStore = useRouterStore()
+
+const value = ref('')
+const changeRouter = () => {
+  router.push({ name: value.value })
+  value.value = ''
+}
+
+const show = ref(false)
+const btnShow = ref(true)
+const hiddenSearch = () => {
+  show.value = false
+  setTimeout(() => {
+    btnShow.value = true
+  }, 500)
+}
+
+const searchInput = ref(null)
+const showSearch = async() => {
+  btnShow.value = false
+  show.value = true
+  await nextTick()
+  searchInput.value.focus()
+}
+
+const reload = ref(false)
+const handleReload = () => {
+  reload.value = true
+  emitter.emit('reload')
+  setTimeout(() => {
+    reload.value = false
+  }, 500)
+}
+const toService = () => {
+  window.open('https://support.qq.com/product/371961')
+}
+
+</script>
+<style scoped lang="scss">
+.reload{
+  font-size: 18px;
+}
+
+.reloading{
+  animation:turn 0.5s linear infinite;
+}
+@keyframes turn {
+  0%{-webkit-transform:rotate(0deg);}
+  25%{-webkit-transform:rotate(90deg);}
+  50%{-webkit-transform:rotate(180deg);}
+  75%{-webkit-transform:rotate(270deg);}
+  100%{-webkit-transform:rotate(360deg);}
+}
+
+
+.service {
+  font-family: "gvaIcon" !important;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+//小屏幕不显示
+@media (max-width: 750px) {
+  .service {
+    display: none;
+  }
+}
 </style>

@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gin-vue-admin/global"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"go.uber.org/zap"
@@ -24,6 +25,7 @@ func (*TencentCOS) UploadFile(file *multipart.FileHeader) (string, string, error
 		global.GVA_LOG.Error("function file.Open() Filed", zap.Any("err", openError.Error()))
 		return "", "", errors.New("function file.Open() Filed, err:" + openError.Error())
 	}
+	defer f.Close() // 创建文件 defer 关闭
 	fileKey := fmt.Sprintf("%d%s", time.Now().Unix(), file.Filename)
 
 	_, err := client.Object.Put(context.Background(), global.GVA_CONFIG.TencentCOS.PathPrefix+"/"+fileKey, f, nil)

@@ -25,12 +25,12 @@ func FileMove(src string, dst string) (err error) {
 	if err != nil {
 		return err
 	}
-	var revoke = false
+	revoke := false
 	dir := filepath.Dir(dst)
 Redirect:
 	_, err = os.Stat(dir)
 	if err != nil {
-		err = os.MkdirAll(dir, 0755)
+		err = os.MkdirAll(dir, 0o755)
 		if err != nil {
 			return err
 		}
@@ -42,11 +42,15 @@ Redirect:
 	return os.Rename(src, dst)
 }
 
+func DeLFile(filePath string) error {
+	return os.RemoveAll(filePath)
+}
+
 //@author: [songzhibin97](https://github.com/songzhibin97)
 //@function: TrimSpace
 //@description: 去除结构体空格
 //@param: target interface (target: 目标结构体,传入必须是指针类型)
-//@return: err error
+//@return: null
 
 func TrimSpace(target interface{}) {
 	t := reflect.TypeOf(target)
@@ -61,5 +65,13 @@ func TrimSpace(target interface{}) {
 			v.Field(i).SetString(strings.TrimSpace(v.Field(i).String()))
 		}
 	}
-	return
+}
+
+// FileExist 判断文件是否存在
+func FileExist(path string) bool {
+	fi, err := os.Lstat(path)
+	if err == nil {
+		return !fi.IsDir()
+	}
+	return !os.IsNotExist(err)
 }

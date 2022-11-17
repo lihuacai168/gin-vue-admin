@@ -1,8 +1,4 @@
-.clearflex {
-    *zoom: 1;
-}
-
-.clearflex:after {
+.clearfix:after {
     content: '';
     display: block;
     height: 0;
@@ -59,12 +55,11 @@
     text-align: center;
 }
 
-.el-pager li.active{
-    color: #409EFF !important;
-    border: 1px solid #409EFF;
+.keyword{
+  width: 220px;
+  margin: 0 0 0 30px;
 }
 
-.el-pager li:hover{
-    color: #409EFF !important;
-    border: 1px solid #409EFF;
+#nprogress .bar {
+    background: #4D70FF !important; //自定义颜色
 }

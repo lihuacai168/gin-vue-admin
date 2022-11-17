@@ -1,20 +1,24 @@
-FROM golang:alpine
+FROM golang:alpine as builder
 
-ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.io,direct
-
-WORKDIR /go/src/gin-vue-admin
+WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 COPY . .
-RUN go env && go build -o server .
+
+RUN go env -w GO111MODULE=on \
+    && go env -w GOPROXY=https://goproxy.cn,direct \
+    && go env -w CGO_ENABLED=0 \
+    && go env \
+    && go mod tidy \
+    && go build -o server .
 
 FROM alpine:latest
+
 LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
 
-WORKDIR /go/src/gin-vue-admin
-COPY --from=0 /go/src/gin-vue-admin/server ./
-COPY --from=0 /go/src/gin-vue-admin/config.yaml ./
-COPY --from=0 /go/src/gin-vue-admin/resource ./resource
+WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
+
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/server ./
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/resource ./resource/
+COPY --from=0 /go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml ./
 
 EXPOSE 8888
-
-ENTRYPOINT ./server
+ENTRYPOINT ./server -c config.docker.yaml

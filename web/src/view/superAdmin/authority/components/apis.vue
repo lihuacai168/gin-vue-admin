@@ -1,112 +1,139 @@
 <template>
   <div>
-    <div class="clearflex">
-      <el-button @click="authApiEnter" class="fl-right" size="small" type="primary">确 定</el-button>
+    <div class="clearfix sticky-button">
+      <el-input v-model="filterText" class="fitler" placeholder="筛选" />
+      <el-button class="fl-right" size="small" type="primary" @click="authApiEnter">确 定</el-button>
     </div>
-    <el-tree
-      :data="apiTreeData"
-      :default-checked-keys="apiTreeIds"
-      :props="apiDefaultProps"
-      @check="nodeChange"
-      default-expand-all
-      highlight-current
-      node-key="onlyId"
-      ref="apiTree"
-      show-checkbox
-    ></el-tree>
+    <div class="tree-content">
+      <el-tree
+        ref="apiTree"
+        :data="apiTreeData"
+        :default-checked-keys="apiTreeIds"
+        :props="apiDefaultProps"
+        default-expand-all
+        highlight-current
+        node-key="onlyId"
+        show-checkbox
+        :filter-node-method="filterNode"
+        @check="nodeChange"
+      />
+    </div>
   </div>
 </template>
 <script>
-import { getAllApis } from '@/api/api'
-import { UpdateCasbin, getPolicyPathByAuthorityId } from '@/api/casbin'
 export default {
   name: 'Apis',
-  props: {
-    row: {
-      default: function() {
-        return {}
-      },
-      type: Object
-    }
-  },
-  data() {
-    return {
-      apiTreeData: [],
-      apiTreeIds: [],
-      needConfirm:false,
-      apiDefaultProps: {
-        children: 'children',
-        label: 'description'
-      }
-    }
-  },
-  methods: {
-    nodeChange(){
-      this.needConfirm = true
+}
+</script>
+
+<script setup>
+import { getAllApis } from '@/api/api'
+import { UpdateCasbin, getPolicyPathByAuthorityId } from '@/api/casbin'
+import { ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+const props = defineProps({
+  row: {
+    default: function() {
+      return {}
     },
-    // 暴露给外层使用的切换拦截统一方法
-    enterAndNext(){
-      this.authApiEnter()
-    },
-    // 创建api树方法
-    buildApiTree(apis) {
-      const apiObj = new Object()
-      apis &&
-        apis.map(item => {
-        item.onlyId = "p:"+item.path+"m:"+item.method
-          if (Object.prototype.hasOwnProperty.call(apiObj,item.apiGroup)) {
+    type: Object
+  }
+})
+
+const apiDefaultProps = ref({
+  children: 'children',
+  label: 'description'
+})
+const filterText = ref('')
+const apiTreeData = ref([])
+const apiTreeIds = ref([])
+const activeUserId = ref('')
+const init = async() => {
+  const res2 = await getAllApis()
+  const apis = res2.data.apis
+
+  apiTreeData.value = buildApiTree(apis)
+  const res = await getPolicyPathByAuthorityId({
+    authorityId: props.row.authorityId
+  })
+  activeUserId.value = props.row.authorityId
+  apiTreeIds.value = []
+  res.data.paths && res.data.paths.forEach(item => {
+    apiTreeIds.value.push('p:' + item.path + 'm:' + item.method)
+  })
+}
+
+init()
+
+const needConfirm = ref(false)
+const nodeChange = () => {
+  needConfirm.value = true
+}
+// 暴露给外层使用的切换拦截统一方法
+const enterAndNext = () => {
+  authApiEnter()
+}
+
+// 创建api树方法
+const buildApiTree = (apis) => {
+  const apiObj = {}
+  apis &&
+        apis.forEach(item => {
+          item.onlyId = 'p:' + item.path + 'm:' + item.method
+          if (Object.prototype.hasOwnProperty.call(apiObj, item.apiGroup)) {
             apiObj[item.apiGroup].push(item)
           } else {
             Object.assign(apiObj, { [item.apiGroup]: [item] })
           }
         })
-      const apiTree = []
-      for (const key in apiObj) {
-        const treeNode = {
-          ID: key,
-          description: key + '组',
-          children: apiObj[key]
-        }
-        apiTree.push(treeNode)
-      }
-      return apiTree
-    },
-    // 关联关系确定
-    async authApiEnter() {
-      const checkArr = this.$refs.apiTree.getCheckedNodes(true)
-      var casbinInfos = []
-      checkArr&&checkArr.map(item=>{
-        var casbinInfo = {
-          path:item.path,
-          method:item.method
-        }
-        casbinInfos.push(casbinInfo)
-      })
-      const res = await UpdateCasbin({
-        authorityId: this.activeUserId,
-        casbinInfos
-      })
-      if (res.code == 0) {
-        this.$message({ type: 'success', message: "api设置成功" })
-      }
+  const apiTree = []
+  for (const key in apiObj) {
+    const treeNode = {
+      ID: key,
+      description: key + '组',
+      children: apiObj[key]
     }
-  },
-  async created() {
-    // 获取api并整理成树结构
-    const res2 = await getAllApis()
-    const apis = res2.data.apis
-   
-    this.apiTreeData = this.buildApiTree(apis)
-    const res = await getPolicyPathByAuthorityId({
-      authorityId: this.row.authorityId
-    })
-    this.activeUserId = this.row.authorityId
-    this.apiTreeIds = []
-    res.data.paths&&res.data.paths.map(item=>{
-      this.apiTreeIds.push("p:"+item.path+"m:"+item.method)
-    })
+    apiTree.push(treeNode)
+  }
+  return apiTree
+}
+
+// 关联关系确定
+const apiTree = ref(null)
+const authApiEnter = async() => {
+  const checkArr = apiTree.value.getCheckedNodes(true)
+  var casbinInfos = []
+  checkArr && checkArr.forEach(item => {
+    var casbinInfo = {
+      path: item.path,
+      method: item.method
+    }
+    casbinInfos.push(casbinInfo)
+  })
+  const res = await UpdateCasbin({
+    authorityId: activeUserId.value,
+    casbinInfos
+  })
+  if (res.code === 0) {
+    ElMessage({ type: 'success', message: 'api设置成功' })
   }
 }
+
+defineExpose({
+  needConfirm,
+  enterAndNext
+})
+
+const filterNode = (value, data) => {
+  if (!value) return true
+  return data.description.indexOf(value) !== -1
+}
+watch(filterText, (val) => {
+  apiTree.value.filter(val)
+})
+
 </script>
-<style lang="scss">
+
+<style lang="scss" scoped>
+@import "@/style/button.scss";
 </style>

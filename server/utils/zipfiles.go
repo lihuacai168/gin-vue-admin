@@ -10,11 +10,10 @@ import (
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: ZipFiles
 //@description: 压缩文件
-//@param: filename string, files []string, oldform, newform string
+//@param: filename string, files []string, oldForm, newForm string
 //@return: error
 
 func ZipFiles(filename string, files []string, oldForm, newForm string) error {
-
 	newZipFile, err := os.Create(filename)
 	if err != nil {
 		return err

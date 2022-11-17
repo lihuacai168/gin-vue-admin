@@ -1,11 +1,11 @@
 <template>
   <el-container class="layout-cont">
     <el-container :class="[isSider?'openside':'hideside',isMobile ? 'mobile': '']">
-      <el-row :class="[isShadowBg?'shadowBg':'']" @click.native="changeShadow()"></el-row>
-      <el-aside class="main-cont main-left">
-        <div class="tilte">
-          <img alt class="logoimg" src="~@/assets/nav_logo.png" />
-          <h2 class="tit-text" v-if="isSider">Gin-Vue-Admin</h2>
+      <el-row :class="[isShadowBg?'shadowBg':'']" @click="changeShadow()" />
+      <el-aside class="main-cont main-left gva-aside">
+        <div class="tilte" :style="{background: backgroundColor}">
+          <img alt class="logoimg" :src="$GIN_VUE_ADMIN.appLogo">
+          <div v-if="isSider" class="tit-text" :style="{color:textColor}">{{ $GIN_VUE_ADMIN.appName }}</div>
         </div>
         <Aside class="aside" />
       </el-aside>
@@ -16,327 +16,243 @@
             :style="{width: `calc(100% - ${isMobile?'0px':isCollapse?'54px':'220px'})`}"
             class="topfix"
           >
-          <el-row>
-            <!-- :xs="8" :sm="6" :md="4" :lg="3" :xl="1" -->
-            <el-header class="header-cont">
-               <el-col :xs="2" :lg="1" :md="1" :sm="1" :xl="1">
-                  <div @click="totalCollapse" class="menu-total">
-                    <i class="el-icon-s-unfold" v-if="isCollapse"></i>
-                    <i class="el-icon-s-fold" v-else></i>
-                  </div>
-                </el-col>
-              <el-col :xs="10" :lg="14" :md='14' :sm="9" :xl="14">
-                 <el-breadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
-                  <el-breadcrumb-item
-                    :key="item.path"
-                    v-for="item in matched.slice(1,matched.length)"
-                  >{{item.meta.title}}</el-breadcrumb-item>
-                </el-breadcrumb>
+            <el-row>
+              <el-col>
+                <el-header class="header-cont">
+                  <el-row class="pd-0">
+                    <el-col :xs="2" :lg="1" :md="1" :sm="1" :xl="1" style="z-index:100">
+                      <div class="menu-total" @click="totalCollapse">
+                        <div v-if="isCollapse" class="gvaIcon gvaIcon-arrow-double-right" />
+                        <div v-else class="gvaIcon gvaIcon-arrow-double-left" />
+                      </div>
+                    </el-col>
+                    <el-col :xs="10" :lg="14" :md="14" :sm="9" :xl="14" :pull="1">
+                      <!-- 修改为手机端不显示顶部标签 -->
+                      <el-breadcrumb v-show="!isMobile" class="breadcrumb">
+                        <el-breadcrumb-item
+                          v-for="item in matched.slice(1,matched.length)"
+                          :key="item.path"
+                        >{{ fmtTitle(item.meta.title,route) }}</el-breadcrumb-item>
+                      </el-breadcrumb>
+                    </el-col>
+                    <el-col :xs="12" :lg="9" :md="9" :sm="14" :xl="9">
+                      <div class="right-box">
+                        <Search />
+                        <el-dropdown>
+                          <div class="dp-flex justify-content-center align-items height-full width-full">
+                            <span class="header-avatar" style="cursor: pointer">
+                              <CustomPic />
+                              <span v-show="!isMobile" style="margin-left: 5px">{{ userStore.userInfo.nickName }}</span>
+                              <el-icon>
+                                <arrow-down />
+                              </el-icon>
+                            </span>
+                          </div>
+                          <template #dropdown>
+                            <el-dropdown-menu class="dropdown-group">
+                              <el-dropdown-item>
+                                <span style="font-weight: 600;">
+                                  当前角色：{{ userStore.userInfo.authority.authorityName }}
+                                </span>
+                              </el-dropdown-item>
+                              <template v-if="userStore.userInfo.authorities">
+                                <el-dropdown-item v-for="item in userStore.userInfo.authorities.filter(i=>i.authorityId!==userStore.userInfo.authorityId)" :key="item.authorityId" @click="changeUserAuth(item.authorityId)">
+                                  <span>
+                                    切换为：{{ item.authorityName }}
+                                  </span>
+                                </el-dropdown-item>
+                              </template>
+                              <el-dropdown-item icon="avatar" @click="toPerson">个人信息</el-dropdown-item>
+                              <el-dropdown-item icon="reading-lamp" @click="userStore.LoginOut">登 出</el-dropdown-item>
+                            </el-dropdown-menu>
+                          </template>
+                        </el-dropdown>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </el-header>
               </el-col>
-               <el-col :xs="12" :lg="9" :md="9" :sm="14" :xl="9">
-                 <div class="fl-right right-box">
-                <Search />
-                <Screenfull class="screenfull" :style="{cursor:'pointer'}"></Screenfull>
-                <el-dropdown>
-                  <span class="header-avatar">
-                   <CustomPic/>
-                    <span style="margin-left: 5px">{{userInfo.nickName}}</span>
-                    <i class="el-icon-arrow-down"></i>
-                  </span>
-                  <el-dropdown-menu class="dropdown-group" slot="dropdown">
-                    <el-dropdown-item>
-                      <span>
-                        更多信息
-                        <el-badge is-dot />
-                      </span>
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="toPerson" icon="el-icon-s-custom">个人信息</el-dropdown-item>
-                    <el-dropdown-item @click.native="LoginOut" icon="el-icon-table-lamp">登 出</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </div>
-               </el-col>
-
-            </el-header>
-          </el-row>
+            </el-row>
             <!-- 当前面包屑用路由自动生成可根据需求修改 -->
             <!--
             :to="{ path: item.path }" 暂时注释不用-->
-            <HistoryComponent />
+            <HistoryComponent ref="layoutHistoryComponent" />
           </div>
         </transition>
-        <transition mode="out-in" name="el-fade-in-linear">
-          <keep-alive>
-            <router-view v-loading="loadingFlag"  element-loading-text="正在加载中" class="admin-box" v-if="$route.meta.keepAlive && reloadFlag"></router-view>
-          </keep-alive>
-        </transition>
-        <transition mode="out-in" name="el-fade-in-linear">
-          <router-view v-loading="loadingFlag"  element-loading-text="正在加载中" class="admin-box" v-if="!$route.meta.keepAlive && reloadFlag"></router-view>
-        </transition>
-       <BottomInfo />
+        <router-view
+          v-if="reloadFlag"
+          v-slot="{ Component }"
+          v-loading="loadingFlag"
+          element-loading-text="正在加载中"
+          class="admin-box"
+        >
+          <div>
+            <transition mode="out-in" name="el-fade-in-linear">
+              <keep-alive :include="routerStore.keepAliveRouters">
+                <component :is="Component" />
+              </keep-alive>
+            </transition>
+          </div>
+        </router-view>
+        <BottomInfo />
+        <setting />
       </el-main>
     </el-container>
-   
+
   </el-container>
 </template>
 
 <script>
-import Aside from '@/view/layout/aside'
-import HistoryComponent from '@/view/layout/aside/historyComponent/history'
-import Screenfull from '@/view/layout/screenfull'
-import Search from '@/view/layout/search/search'
-import BottomInfo from '@/view/layout/bottomInfo/bottomInfo'
-import { mapGetters, mapActions } from 'vuex'
-import CustomPic from '@/components/customPic'
 export default {
   name: 'Layout',
-  data() {
-    return {
-      show: false,
-      isCollapse: false,
-      isSider: true,
-      isMobile: false,
-      isShadowBg: false,
-      loadingFlag:false,
-      reloadFlag:true,
-      value: ''
-    }
-  },
-  components: {
-    Aside,
-    HistoryComponent,
-    Screenfull,
-    Search,
-    BottomInfo,
-    CustomPic
-  },
-  methods: {
-    ...mapActions('user', ['LoginOut']),
-    reload(){
-      this.reloadFlag = false
-      this.$nextTick(()=>{
-        this.reloadFlag = true
-      })
-    },
-    totalCollapse() {
-      this.isCollapse = !this.isCollapse
-      this.isSider = !this.isCollapse
-      this.isShadowBg = !this.isCollapse
-      this.$bus.emit('collapse', this.isCollapse)
-    },
-    toPerson() {
-      this.$router.push({ name: 'person' })
-    },
-    changeShadow() {
-      this.isShadowBg = !this.isShadowBg
-      this.isSider = !!this.isCollapse
-      this.totalCollapse()
-    },
-  },
-  computed: {
-    ...mapGetters('user', ['userInfo']),
-    title() {
-      return this.$route.meta.title || '当前页面'
-    },
-    matched() {
-      return this.$route.matched
-    }
-  },
-  mounted() {
-    let screenWidth = document.body.clientWidth
-    if (screenWidth < 1000) {
-      this.isMobile = true
-      this.isSider = false
-      this.isCollapse = true
-    } else if (screenWidth >= 1000 && screenWidth < 1200) {
-      this.isMobile = false
-      this.isSider = false
-      this.isCollapse = true
-    } else {
-      this.isMobile = false
-      this.isSider = true
-      this.isCollapse = false
-    }
-    this.$bus.emit('collapse', this.isCollapse)
-    this.$bus.emit('mobile', this.isMobile)
-    this.$bus.on("reload",this.reload)
-    this.$bus.on("showLoading",()=>{
-      this.loadingFlag = true
-    })
-    this.$bus.on("closeLoading",()=>{
-      this.loadingFlag = false
-    })
-    window.onresize = () => {
-      return (() => {
-        let screenWidth = document.body.clientWidth
-        if (screenWidth < 1000) {
-          this.isMobile = true
-          this.isSider = false
-          this.isCollapse = true
-        } else if (screenWidth >= 1000 && screenWidth < 1200) {
-          this.isMobile = false
-          this.isSider = false
-          this.isCollapse = true
-        } else {
-          this.isMobile = false
-          this.isSider = true
-          this.isCollapse = false
-        }
-        this.$bus.emit('collapse', this.isCollapse)
-        this.$bus.emit('mobile', this.isMobile)
-      })()
-    }
-  }
 }
 </script>
+
+<script setup>
+import Aside from '@/view/layout/aside/index.vue'
+import HistoryComponent from '@/view/layout/aside/historyComponent/history.vue'
+import Search from '@/view/layout/search/search.vue'
+import BottomInfo from '@/view/layout/bottomInfo/bottomInfo.vue'
+import CustomPic from '@/components/customPic/index.vue'
+import Setting from './setting/index.vue'
+import { setUserAuthority } from '@/api/user'
+import { emitter } from '@/utils/bus.js'
+import { computed, ref, onMounted, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useRouterStore } from '@/pinia/modules/router'
+import { fmtTitle } from '@/utils/fmtRouterTitle'
+import { useUserStore } from '@/pinia/modules/user'
+
+const router = useRouter()
+const route = useRoute()
+const routerStore = useRouterStore()
+// 三种窗口适配
+const isCollapse = ref(false)
+const isSider = ref(true)
+const isMobile = ref(false)
+
+const initPage = () => {
+  const screenWidth = document.body.clientWidth
+  if (screenWidth < 1000) {
+    isMobile.value = true
+    isSider.value = false
+    isCollapse.value = true
+  } else if (screenWidth >= 1000 && screenWidth < 1200) {
+    isMobile.value = false
+    isSider.value = false
+    isCollapse.value = true
+  } else {
+    isMobile.value = false
+    isSider.value = true
+    isCollapse.value = false
+  }
+}
+
+initPage()
+
+const loadingFlag = ref(false)
+onMounted(() => {
+  // 挂载一些通用的事件
+  emitter.emit('collapse', isCollapse.value)
+  emitter.emit('mobile', isMobile.value)
+  emitter.on('reload', reload)
+  emitter.on('showLoading', () => {
+    loadingFlag.value = true
+  })
+  emitter.on('closeLoading', () => {
+    loadingFlag.value = false
+  })
+  window.onresize = () => {
+    return (() => {
+      initPage()
+      emitter.emit('collapse', isCollapse.value)
+      emitter.emit('mobile', isMobile.value)
+    })()
+  }
+  if (userStore.loadingInstance) {
+    userStore.loadingInstance.close()
+  }
+})
+
+const userStore = useUserStore()
+
+const textColor = computed(() => {
+  if (userStore.sideMode === 'dark') {
+    return '#fff'
+  } else if (userStore.sideMode === 'light') {
+    return '#191a23'
+  } else {
+    return userStore.baseColor
+  }
+})
+
+const backgroundColor = computed(() => {
+  if (userStore.sideMode === 'dark') {
+    return '#191a23'
+  } else if (userStore.sideMode === 'light') {
+    return '#fff'
+  } else {
+    return userStore.sideMode
+  }
+})
+
+const matched = computed(() => route.meta.matched)
+
+const changeUserAuth = async(id) => {
+  const res = await setUserAuthority({
+    authorityId: id
+  })
+  if (res.code === 0) {
+    window.sessionStorage.setItem('needCloseAll', 'true')
+    window.location.reload()
+  }
+}
+
+const reloadFlag = ref(true)
+let reloadTimer = null
+const reload = async() => {
+  if (reloadTimer) {
+    window.clearTimeout(reloadTimer)
+  }
+  reloadTimer = window.setTimeout(async() => {
+    if (route.meta.keepAlive) {
+      reloadFlag.value = false
+      await nextTick()
+      reloadFlag.value = true
+    } else {
+      const title = route.meta.title
+      router.push({ name: 'Reload', params: { title }})
+    }
+  }, 400)
+}
+
+const isShadowBg = ref(false)
+const totalCollapse = () => {
+  isCollapse.value = !isCollapse.value
+  isSider.value = !isCollapse.value
+  isShadowBg.value = !isCollapse.value
+  emitter.emit('collapse', isCollapse.value)
+}
+
+const toPerson = () => {
+  router.push({ name: 'person' })
+}
+const changeShadow = () => {
+  isShadowBg.value = !isShadowBg.value
+  isSider.value = !!isCollapse.value
+  totalCollapse()
+}
+</script>
+
 <style lang="scss">
 @import '@/style/mobile.scss';
 
-// $headerHigh: 52px;
-// $mainHight: 100vh;
-// .dropdown-group {
-//   min-width: 100px;
-// }
-// .topfix {
-//   position: fixed;
-//   top: 0;
-//   box-sizing: border-box;
-//   z-index: 999;
-// }
-// .admin-box {
-//   min-height: calc(100vh - 240px);
-//   background-color: rgb(255, 255, 255);
-//   margin-top: 100px;
-// }
-// .el-scrollbar__wrap {
-//   padding-bottom: 17px;
-// }
-// .layout-cont {
-//   .right-box {
-//     text-align: center;
-//     vertical-align: middle;
-//     img {
-//       vertical-align: middle;
-//       border: 1px solid #ccc;
-//       border-radius: 6px;
-//     }
-//   }
-
-//   .header-cont {
-//     height: $headerHigh !important;
-//     background: #fff;
-//     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-//     line-height: $headerHigh;
-//   }
-//   .main-cont {
-//     .breadcrumb {
-//       line-height: 48px;
-//       display: inline-block;
-//       padding: 0 24px;
-//       // padding: 6px;
-//       // border-bottom: 1px solid #eee;
-//     }
-
-//     &.el-main {
-//       overflow: auto;
-//       background: #fff;
-//       // padding: 0px 10px;
-//       // background: #fff;
-//     }
-//     height: $mainHight !important;
-//     overflow: visible;
-//     position: relative;
-//     .menu-total {
-//       // z-index: 5;
-//       // position: absolute;
-//       // top: 10px;
-//       // right: -35px;
-//       margin-left: -10px;
-//       float: left;
-//       margin-top: 10px;
-//       width: 30px;
-//       height: 30px;
-//       line-height: 30px;
-//       font-size: 30px;
-//       // border: 0 solid #ffffff;
-//       // border-radius: 50%;
-//       // background: #fff;
-//     }
-//     .aside {
-//       overflow: auto;
-//       // background: #fff;
-//       &::-webkit-scrollbar {
-//         display: none;
-//       }
-//     }
-//     .el-menu-vertical {
-//       height: calc(100vh - 64px) !important;
-//       visibility: auto;
-//       &:not(.el-menu--collapse) {
-//         width: 220px;
-//       }
-//     }
-//     .el-menu--collapse {
-//       width: 54px;
-//       li {
-//         .el-tooltip,
-//         .el-submenu__title {
-//           padding: 0px 15px !important;
-//         }
-//       }
-//     }
-//     &::-webkit-scrollbar {
-//       display: none;
-//     }
-//     &.main-left {
-//       width: auto !important;
-//     }
-//     &.main-right {
-//       .admin-title {
-//         float: left;
-//         font-size: 16px;
-//         vertical-align: middle;
-//         margin-left: 20px;
-//         img {
-//           vertical-align: middle;
-//         }
-//         &.collapse {
-//           width: 53px;
-//         }
-//       }
-//     }
-//   }
-// }
-// .tilte {
-//   background: #001529;
-//   min-height: 64px;
-//   line-height: 64px;
-//   background: #002140;
-//   text-align: center;
-//   .logoimg {
-//     width: 30px;
-//     height: 30px;
-//     vertical-align: middle;
-//     background: #fff;
-//     border-radius: 50%;
-//     padding: 3px;
-//   }
-//   .tit-text {
-//     display: inline-block;
-//     color: #fff;
-//     font-weight: 600;
-//     font-size: 20px;
-//     vertical-align: middle;
-//   }
-// }
-
-
-// .screenfull {
-//   display: inline-block;
-// }
-// .header-avatar{
-// 	display: flex;
-// 	justify-content: center;
-// 	align-items: center;
-// }
+.dark{
+  background-color: #191a23 !important;
+  color: #fff !important;
+}
+.light{
+  background-color: #fff !important;
+  color: #000 !important;
+}
 </style>

@@ -1,74 +1,93 @@
 <template>
   <div class="upload">
-    <el-row>
-      <el-col :span="2">
+    <div class="gva-table-box">
+
+      <div class="gva-btn-list">
         <el-upload
+          class="excel-btn"
           :action="`${path}/excel/importExcel`"
-          :headers="{'x-token':token}"
+          :headers="{'x-token':userStore.token}"
           :on-success="loadExcel"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary" icon="el-icon-upload2">导入</el-button>
+          <el-button size="small" type="primary" icon="upload">导入</el-button>
         </el-upload>
-      </el-col>
-      <el-col :span="2">
-        <el-button size="small" type="primary" icon="el-icon-download" @click="handleExcelExport('ExcelExport.xlsx')">导出</el-button>
-      </el-col>
-      <el-col :span="2">
-        <el-button size="small" type="success" icon="el-icon-download" @click="downloadExcelTemplate()">下载模板</el-button>
-      </el-col>
-    </el-row>
-    <el-table :data="tableData" border row-key="ID" stripe>
-      <el-table-column label="ID" min-width="100" prop="ID"></el-table-column>
-      <el-table-column label="路由Name" min-width="160" prop="name"></el-table-column>
-      <el-table-column label="路由Path" min-width="160" prop="path"></el-table-column>
-      <el-table-column label="是否隐藏" min-width="100" prop="hidden">
-        <template slot-scope="scope">
-          <span>{{scope.row.hidden?"隐藏":"显示"}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="父节点" min-width="90" prop="parentId"></el-table-column>
-      <el-table-column label="排序" min-width="70" prop="sort"></el-table-column>
-      <el-table-column label="文件路径" min-width="360" prop="component"></el-table-column>
-    </el-table>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="handleExcelExport('ExcelExport.xlsx')">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
+      </div>
+      <el-table :data="tableData" row-key="ID">
+        <el-table-column align="left" label="ID" min-width="100" prop="ID" />
+        <el-table-column align="left" show-overflow-tooltip label="路由Name" min-width="160" prop="name" />
+        <el-table-column align="left" show-overflow-tooltip label="路由Path" min-width="160" prop="path" />
+        <el-table-column align="left" label="是否隐藏" min-width="100" prop="hidden">
+
+          <template #default="scope">
+            <span>{{ scope.row.hidden?"隐藏":"显示" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="left" label="父节点" min-width="90" prop="parentId" />
+        <el-table-column align="left" label="排序" min-width="70" prop="sort" />
+        <el-table-column align="left" label="文件路径" min-width="360" prop="component" />
+      </el-table>
+    </div>
   </div>
 </template>
+
 <script>
-const path = process.env.VUE_APP_BASE_API;
-import { mapGetters } from 'vuex';
-import infoList from "@/mixins/infoList";
-import { exportExcel, loadExcelData, downloadTemplate } from "@/api/excel";
-import { getMenuList } from "@/api/menu";
 export default {
   name: 'Excel',
-  mixins: [infoList],
-  data() {
-    return {
-      listApi: getMenuList,
-      path: path
-    }
-  },
-  computed: {
-    ...mapGetters('user', ['userInfo', 'token'])
-  },
-  methods: {
-    handleExcelExport(fileName) {
-      if (!fileName || typeof fileName !== "string") {
-        fileName = "ExcelExport.xlsx";
-      }
-      exportExcel(this.tableData, fileName);
-    },
-    loadExcel() {
-      this.listApi = loadExcelData;
-      this.getTableData();
-    },
-    downloadExcelTemplate() {
-      downloadTemplate('ExcelTemplate.xlsx')
-    }
-  },
-  created() {
-    this.pageSize = 999;
-    this.getTableData();
-  }
 }
 </script>
+
+<script setup>
+import { useUserStore } from '@/pinia/modules/user'
+import { exportExcel, loadExcelData, downloadTemplate } from '@/api/excel'
+import { getMenuList } from '@/api/menu'
+import { ref } from 'vue'
+const path = ref(import.meta.env.VITE_BASE_API)
+
+const page = ref(1)
+const total = ref(0)
+const pageSize = ref(999)
+const tableData = ref([])
+
+// 查询
+const getTableData = async(f = () => {}) => {
+  const table = await f({ page: page.value, pageSize: pageSize.value })
+  if (table.code === 0) {
+    tableData.value = table.data.list
+    total.value = table.data.total
+    page.value = table.data.page
+    pageSize.value = table.data.pageSize
+  }
+}
+getTableData(getMenuList)
+
+const userStore = useUserStore()
+
+const handleExcelExport = (fileName) => {
+  if (!fileName || typeof fileName !== 'string') {
+    fileName = 'ExcelExport.xlsx'
+  }
+  exportExcel(tableData.value, fileName)
+}
+const loadExcel = () => {
+  getTableData(loadExcelData)
+}
+const downloadExcelTemplate = () => {
+  downloadTemplate('ExcelTemplate.xlsx')
+}
+
+</script>
+
+<style lang="scss" scoped>
+.btn-list{
+  display: flex;
+  margin-bottom: 12px;
+  justify-content: flex-end;
+
+}
+.excel-btn+.excel-btn{
+  margin-left: 10px;
+}
+</style>

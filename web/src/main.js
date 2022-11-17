@@ -1,157 +1,41 @@
-import Vue from 'vue'
-import App from './App.vue'
-
-//  按需引入element
-import {
-    Button, 
-    Select, 
-    Dialog, 
-    Form, 
-    Input,
-    FormItem, 
-    Option, 
-    Loading, 
-    Message, 
-    Container, 
-    Card,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
-    Row,
-    Col,
-    Menu,
-    Submenu,
-    MenuItem,
-    Aside,
-    Main,
-    Badge,
-    Header,
-    Tabs,
-    Breadcrumb,
-    BreadcrumbItem,
-    Scrollbar,
-    Avatar,
-    TabPane,
-    Divider,
-    Table,
-    TableColumn,
-    Cascader,
-    Checkbox,
-    CheckboxGroup,
-    Pagination,
-    Tag,
-    Drawer,
-    Tree,
-    Popover,
-    Switch,
-    Collapse,
-    CollapseItem,
-    Tooltip,
-    DatePicker,
-    InputNumber,
-    Steps,
-    Upload,
-    Progress,
-    MessageBox,
-    Image
-} from 'element-ui';
-
-Vue.use(Button);
-Vue.use(Select);
-Vue.use(Dialog);
-Vue.use(Form);
-Vue.use(FormItem);
-Vue.use(Input);
-Vue.use(Option);
-Vue.use(Container);
-Vue.use(Card);
-Vue.use(Dropdown);
-Vue.use(DropdownMenu);
-Vue.use(DropdownItem);
-Vue.use(Row);
-Vue.use(Col);
-Vue.use(Menu);
-Vue.use(Submenu);
-Vue.use(MenuItem);
-Vue.use(Aside);
-Vue.use(Main);
-Vue.use(Badge);
-Vue.use(Header);
-Vue.use(Tabs);
-Vue.use(Breadcrumb);
-Vue.use(BreadcrumbItem);
-Vue.use(Avatar);
-Vue.use(TabPane);
-Vue.use(Divider);
-Vue.use(Table);
-Vue.use(TableColumn);
-Vue.use(Checkbox);
-Vue.use(Cascader);
-Vue.use(Tag);
-Vue.use(Pagination);
-Vue.use(Drawer);
-Vue.use(Tree);
-Vue.use(CheckboxGroup);
-Vue.use(Popover);
-Vue.use(InputNumber);
-Vue.use(Switch);
-Vue.use(Collapse);
-Vue.use(CollapseItem);
-Vue.use(Tooltip);
-Vue.use(DatePicker);
-Vue.use(Steps);
-Vue.use(Upload);
-Vue.use(Progress);
-Vue.use(Scrollbar);
-Vue.use(Loading.directive);
-Vue.use(Image)
-
-Vue.prototype.$loading = Loading.service;
-Vue.prototype.$message = Message;
-Vue.prototype.$confirm = MessageBox.confirm;
-Dialog.props.closeOnClickModal.default = false
-
+import { createApp } from 'vue'
+import 'element-plus/dist/index.css'
+import './style/element_visiable.scss'
+import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+// 引入gin-vue-admin前端初始化相关内容
+import './core/gin-vue-admin'
 // 引入封装的router
 import router from '@/router/index'
-
-// time line css
-import '../node_modules/timeline-vuejs/dist/timeline-vuejs.css'
-
 import '@/permission'
-import { store } from '@/store/index'
-Vue.config.productionTip = false
+import run from '@/core/gin-vue-admin.js'
+import auth from '@/directive/auth'
+import { store } from '@/pinia'
+import App from './App.vue'
+import { initDom } from './utils/positionToCode'
+initDom()
+/**
+ * @description 导入加载进度条，防止首屏加载时间过长，用户等待
+ *
+ * */
+import Nprogress from 'nprogress'
+import 'nprogress/nprogress.css'
+Nprogress.configure({ showSpinner: false, ease: 'ease', speed: 500 })
+Nprogress.start()
 
-// 路由守卫
-import Bus from '@/utils/bus.js'
-Vue.use(Bus)
+/**
+ * 无需在这块结束，会在路由中间件中结束此块内容
+ * */
 
-import APlayer from '@moefe/vue-aplayer';
+const app = createApp(App)
+app.config.productionTip = false
 
-Vue.use(APlayer, {
-    defaultCover: 'https://github.com/u3u.png',
-    productionTip: true,
-});
+app
+  .use(run)
+  .use(store)
+  .use(auth)
+  .use(router)
+  .use(ElementPlus, { locale: zhCn })
+  .mount('#app')
 
-
-import { auth } from '@/directive/auth'
-// 按钮权限指令
-auth(Vue)
-
-import uploader from 'vue-simple-uploader'
-Vue.use(uploader)
-
-export default new Vue({
-    render: h => h(App),
-    router,
-    store
-}).$mount('#app')
-
-
-console.log(`
-       欢迎使用 Gin-Vue-Admin
-       当前版本:V2.4.0
-       加群方式:微信：shouzi_1994 QQ群：622360840
-       默认自动化文档地址:http://127.0.0.1%s/swagger/index.html
-       默认前端文件运行地址:http://127.0.0.1:8080
-       如果项目让您获得了收益，希望您能请团队喝杯可乐:https://www.gin-vue-admin.com/docs/coffee
-`)
+export default app
