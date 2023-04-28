@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', () => {
     headerImg: '',
     authority: {},
     sideMode: 'dark',
-    activeColor: '#4D70FF',
+    activeColor: 'var(--el-color-primary)',
     baseColor: '#fff'
   })
   const token = ref(window.localStorage.getItem('token') || '')
@@ -65,8 +65,15 @@ export const useUserStore = defineStore('user', () => {
         asyncRouters.forEach(asyncRouter => {
           router.addRoute(asyncRouter)
         })
-        await router.push({ name: userInfo.value.authority.defaultRouter })
+        await router.replace({ name: userInfo.value.authority.defaultRouter })
         loadingInstance.value.close()
+
+        const isWin = ref(/windows/i.test(navigator.userAgent))
+        if (isWin.value) {
+          window.localStorage.setItem('osType', 'WIN')
+        } else {
+          window.localStorage.setItem('osType', 'MAC')
+        }
         return true
       }
     } catch (e) {
@@ -123,10 +130,7 @@ export const useUserStore = defineStore('user', () => {
     }
   })
   const activeColor = computed(() => {
-    if (userInfo.value.sideMode === 'dark' || userInfo.value.sideMode === 'light') {
-      return '#4D70FF'
-    }
-    return userInfo.activeColor
+    return 'var(--el-color-primary)'
   })
 
   watch(() => token.value, () => {

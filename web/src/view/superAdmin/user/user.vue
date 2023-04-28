@@ -3,7 +3,7 @@
     <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button size="small" type="primary" icon="plus" @click="addUser">新增用户</el-button>
+        <el-button type="primary" icon="plus" @click="addUser">新增用户</el-button>
       </div>
       <el-table
         :data="tableData"
@@ -50,15 +50,15 @@
             <el-popover v-model="scope.row.visible" placement="top" width="160">
               <p>确定要删除此用户吗</p>
               <div style="text-align: right; margin-top: 8px;">
-                <el-button size="small" type="primary" link @click="scope.row.visible = false">取消</el-button>
-                <el-button type="primary" size="small" @click="deleteUserFunc(scope.row)">确定</el-button>
+                <el-button type="primary" link @click="scope.row.visible = false">取消</el-button>
+                <el-button type="primary" @click="deleteUserFunc(scope.row)">确定</el-button>
               </div>
               <template #reference>
-                <el-button type="primary" link icon="delete" size="small">删除</el-button>
+                <el-button type="primary" link icon="delete">删除</el-button>
               </template>
             </el-popover>
-            <el-button type="primary" link icon="edit" size="small" @click="openEdit(scope.row)">编辑</el-button>
-            <el-button type="primary" link icon="magic-stick" size="small" @click="resetPasswordFunc(scope.row)">重置密码</el-button>
+            <el-button type="primary" link icon="edit" @click="openEdit(scope.row)">编辑</el-button>
+            <el-button type="primary" link icon="magic-stick" @click="resetPasswordFunc(scope.row)">重置密码</el-button>
           </template>
         </el-table-column>
 
@@ -120,7 +120,7 @@
           </el-form-item>
           <el-form-item label="头像" label-width="80px">
             <div style="display:inline-block" @click="openHeaderChange">
-              <img v-if="userInfo.headerImg" class="header-img-box" :src="(userInfo.headerImg && userInfo.headerImg.slice(0, 4) !== 'http')?path+userInfo.headerImg:userInfo.headerImg">
+              <img v-if="userInfo.headerImg" alt="头像" class="header-img-box" :src="(userInfo.headerImg && userInfo.headerImg.slice(0, 4) !== 'http')?path+userInfo.headerImg:userInfo.headerImg">
               <div v-else class="header-img-box">从媒体库选择</div>
             </div>
           </el-form-item>
@@ -131,8 +131,8 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button size="small" @click="closeAddUserDialog">取 消</el-button>
-          <el-button size="small" type="primary" @click="enterAddUserDialog">确 定</el-button>
+          <el-button @click="closeAddUserDialog">取 消</el-button>
+          <el-button type="primary" @click="enterAddUserDialog">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -252,10 +252,9 @@ const resetPasswordFunc = (row) => {
 }
 const setAuthorityIds = () => {
   tableData.value && tableData.value.forEach((user) => {
-    const authorityIds = user.authorities && user.authorities.map(i => {
+    user.authorityIds = user.authorities && user.authorities.map(i => {
       return i.authorityId
     })
-    user.authorityIds = authorityIds
   })
 }
 
@@ -301,6 +300,12 @@ const rules = ref({
   ],
   nickName: [
     { required: true, message: '请输入用户昵称', trigger: 'blur' }
+  ],
+  phone: [
+    { pattern: /^1([38][0-9]|4[014-9]|[59][0-35-9]|6[2567]|7[0-8])\d{8}$/, message: '请输入合法手机号', trigger: 'blur' },
+  ],
+  email: [
+    { pattern: /^([0-9A-Za-z\-_.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g, message: '请输入正确的邮箱', trigger: 'blur' },
   ],
   authorityId: [
     { required: true, message: '请选择用户角色', trigger: 'blur' }
